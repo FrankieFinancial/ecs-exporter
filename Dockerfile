@@ -1,17 +1,24 @@
-FROM golang:1.8-alpine
+FROM golang:1.9 as builder
+WORKDIR /go/src/github.com/slok/ecs-exporter/
+ADD  . .
+RUN go build -o ecs-exporter --ldflags "-w -linkmode external -extldflags '-static'" ./cmd/ecs-exporter
 
 
-RUN apk --update add musl-dev gcc tar git bash wget && rm -rf /var/cache/apk/*
-
+FROM alpine:3.8
+RUN apk --no-cache add ca-certificates
+WORKDIR /app
+COPY --from=builder /go/src/github.com/slok/ecs-exporter/ecs-exporter .
 # Create user
 ARG uid=1000
 ARG gid=1000
-RUN addgroup -g $gid ecs-exporter
-RUN adduser -D -u $uid -G ecs-exporter ecs-exporter
+ARG username="ecs-exporter"
+RUN addgroup -g $gid $username
+RUN adduser -D -u $uid -G $username $username
+RUN chown -R $username:$username /app
 
-RUN mkdir -p /go/src/github.com/slok/ecs-exporter/
-RUN chown -R ecs-exporter:ecs-exporter /go
+# Run container as $username
+USER $username
 
-WORKDIR /go/src/github.com/slok/ecs-exporter/
+ENTRYPOINT ["./ecs-exporter"]
 
-USER ecs-exporter
+
