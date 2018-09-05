@@ -1,4 +1,4 @@
-package: github.com/slok/ecs-exporter
+package: github.com/coveo/ecs-exporter
 import:
 - package: github.com/prometheus/client_golang
   subpackages:

@@ -5,7 +5,7 @@
 SERVICE_NAME := ecs-exporter
 
 # Docker image name for this project
-IMAGE_NAME := slok/$(SERVICE_NAME)
+IMAGE_NAME := coveo/$(SERVICE_NAME)
 
 # Get the main unix group for the user running make (to be used by docker-compose later)
 GID := $(shell id -g)

@@ -1,4 +1,4 @@
-# ECS exporter [![Build Status](https://travis-ci.org/slok/ecs-exporter.svg?branch=master)](https://travis-ci.org/slok/ecs-exporter)
+# ECS exporter [![Build Status](https://travis-ci.org/coveo/ecs-exporter.svg?branch=master)](https://travis-ci.org/coveo/ecs-exporter)
 
 Export AWS ECS cluster metrics to Prometheus
 
@@ -40,13 +40,13 @@ make
 
 ## Docker
 
-You can deploy this exporter using the [slok/ecs-exporter](https://hub.docker.com/r/slok/ecs-exporter/) Docker image.
+You can deploy this exporter using the [coveo/ecs-exporter](https://hub.docker.com/r/coveo/ecs-exporter/) Docker image.
 
 Note: Requires AWS credentials or permission from an EC2 instance, for example you can pass the env vars using `-e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}` options
 
 For example:
 
 ```bash
-docker pull slok/ecs-exporter
-docker run -d -p 9222:9222 slok/ecs-exporter -aws.region="eu-west-1"
+docker pull coveo/ecs-exporter
+docker run -d -p 9222:9222 coveo/ecs-exporter -aws.region="eu-west-1"
 ```
