@@ -8,8 +8,8 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 
-	"github.com/slok/ecs-exporter/collector"
-	"github.com/slok/ecs-exporter/log"
+	"github.com/coveo/ecs-exporter/collector"
+	"github.com/coveo/ecs-exporter/log"
 )
 
 // Main is the application entry point

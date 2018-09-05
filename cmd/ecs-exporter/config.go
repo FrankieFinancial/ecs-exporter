@@ -6,7 +6,7 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/slok/ecs-exporter/log"
+	"github.com/coveo/ecs-exporter/log"
 )
 
 const (

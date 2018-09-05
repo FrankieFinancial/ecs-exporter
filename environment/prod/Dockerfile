@@ -1,9 +1,9 @@
-FROM slok/ecs-exporter_base:latest
+FROM coveo/ecs-exporter_base:latest
 
 USER root
 
 # Prepare
-WORKDIR /go/src/github.com/slok/ecs-exporter/
+WORKDIR /go/src/github.com/coveo/ecs-exporter/
 RUN mkdir -p /bin
 COPY . ./
 

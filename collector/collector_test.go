@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/coveo/ecs-exporter/types"
 	"github.com/prometheus/client_golang/prometheus"
 	dto "github.com/prometheus/client_model/go"
-	"github.com/slok/ecs-exporter/types"
 )
 
 type metricResult struct {

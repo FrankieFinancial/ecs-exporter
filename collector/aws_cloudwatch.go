@@ -10,8 +10,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 
-	"github.com/slok/ecs-exporter/log"
-	"github.com/slok/ecs-exporter/types"
+	"github.com/coveo/ecs-exporter/log"
+	"github.com/coveo/ecs-exporter/types"
 )
 
 const (
@@ -25,6 +25,7 @@ var metricsToGet = []string{
 // CWGatherer is the interface that implements the methods required to gather cloudwath data
 type CWGatherer interface {
 	GetClusterContainerInstancesMetrics(instance *types.ECSContainerInstance) (*types.InstanceMetrics, error)
+	GetClusterMetrics(cluster *types.ECSCluster, metricName string) (float64, error)
 }
 
 // CWClient is a wrapper for AWS ecs client that implements helpers to get ECS clusters metrics
@@ -67,12 +68,23 @@ func (cw *CWClient) GetClusterContainerInstancesMetrics(instance *types.ECSConta
 	return metrics, nil
 }
 
+// GetClusterMetrics return metric for an cluster
+func (cw *CWClient) GetClusterMetrics(cluster *types.ECSCluster, metricName string) (float64, error) {
+	return cw.getMertic("AWS/ECS", "ClusterName", cluster.Name, metricName)
+}
+
 func (cw *CWClient) getInstanceMertic(instanceID string, metricName string) (float64, error) {
+	return cw.getMertic("AWS/EC2", "ClusterName", instanceID, metricName)
+}
+
+func (cw *CWClient) getMertic(namespace string, dimensionName string, dimensionValue string, metricName string) (float64, error) {
 	var result float64
+	dimensions := []*cloudwatch.Dimension{
+		{Name: aws.String(dimensionName), Value: aws.String(dimensionValue)}}
 
-	params := generateStatInput(instanceID, metricName)
+	params := generateStatInput(dimensions, namespace, metricName)
 
-	log.Debugf("Getting metric  '%s'  for : %s", metricName, instanceID)
+	log.Debugf("Getting metric  '%s'  for : %s", metricName, dimensionValue)
 	resp, err := cw.client.GetMetricStatistics(params)
 
 	if err != nil {
@@ -89,7 +101,7 @@ func (cw *CWClient) getInstanceMertic(instanceID string, metricName string) (flo
 	return result, nil
 }
 
-func generateStatInput(instanceID string, metricName string) *cloudwatch.GetMetricStatisticsInput {
+func generateStatInput(dimension []*cloudwatch.Dimension, namespace string, metricName string) *cloudwatch.GetMetricStatisticsInput {
 	period := -20 * time.Minute
 	now := time.Now()
 
@@ -97,14 +109,9 @@ func generateStatInput(instanceID string, metricName string) *cloudwatch.GetMetr
 		StartTime:  aws.Time(now.Add(period)), // Required
 		EndTime:    aws.Time(now),             // Required
 		MetricName: aws.String(metricName),    // Required
-		Namespace:  aws.String("AWS/EC2"),     // Required
+		Namespace:  aws.String(namespace),     // Required
 		Period:     aws.Int64(60),             // Required
-		Dimensions: []*cloudwatch.Dimension{
-			{
-				Name:  aws.String("InstanceId"), // Required
-				Value: aws.String(instanceID),   // Required
-			},
-		},
+		Dimensions: dimension,
 		Statistics: []*string{
 			aws.String("Maximum"),
 		},

@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/ecs"
 	"github.com/aws/aws-sdk-go/service/ecs/ecsiface"
 
-	"github.com/slok/ecs-exporter/log"
-	"github.com/slok/ecs-exporter/types"
+	"github.com/coveo/ecs-exporter/log"
+	"github.com/coveo/ecs-exporter/types"
 )
 
 const (

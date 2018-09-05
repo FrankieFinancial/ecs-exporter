@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/coveo/ecs-exporter/types"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/slok/ecs-exporter/types"
 )
 
 type ECSMockClient struct {
