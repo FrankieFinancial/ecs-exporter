@@ -34,6 +34,20 @@ var (
 		[]string{"region"}, nil,
 	)
 
+	// Clusters CPU
+	clusterCPU = prometheus.NewDesc(
+		prometheus.BuildFQName(namespace, "", "clusters_cpu_utilization"),
+		"Cluster CPU utilization",
+		[]string{"region", "cluster"}, nil,
+	)
+
+	// Clusters Memory
+	clusterMemory = prometheus.NewDesc(
+		prometheus.BuildFQName(namespace, "", "clusters_memory_utilization"),
+		"Cluster memory utilization",
+		[]string{"region", "cluster"}, nil,
+	)
+
 	//  Services metrics
 	serviceCount = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "", "services"),
@@ -262,6 +276,23 @@ func (e *Exporter) validCluster(cluster *types.ECSCluster) bool {
 func (e *Exporter) collectClusterMetrics(ctx context.Context, ch chan<- prometheus.Metric, clusters []*types.ECSCluster) {
 	// Total cluster count
 	sendSafeMetric(ctx, ch, prometheus.MustNewConstMetric(clusterCount, prometheus.GaugeValue, float64(len(clusters)), e.region))
+	log.Debugf("clusters : %v", clusters)
+	for _, cs := range clusters {
+		memory, err := e.CWClient.GetClusterMetrics(cs, "MemoryUtilization")
+		if err != nil {
+			log.Error(err)
+		}
+		log.Debugf("Get Memory for cluster %v: %v", cs.Name, memory)
+		sendSafeMetric(ctx, ch, prometheus.MustNewConstMetric(clusterMemory, prometheus.GaugeValue, float64(memory), e.region, cs.Name))
+
+		cpu, err := e.CWClient.GetClusterMetrics(cs, "CPUUtilization")
+		if err != nil {
+			log.Error(err)
+		}
+		log.Debugf("Get CPU for cluster %v: %v", cs.Name, cpu)
+		sendSafeMetric(ctx, ch, prometheus.MustNewConstMetric(clusterCPU, prometheus.GaugeValue, float64(cpu), e.region, cs.Name))
+	}
+
 }
 
 func (e *Exporter) collectClusterServicesMetrics(ctx context.Context, ch chan<- prometheus.Metric, cluster *types.ECSCluster, services []*types.ECSService) {
