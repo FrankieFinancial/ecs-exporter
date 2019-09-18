@@ -6,9 +6,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds"
 	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
-	"github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/applicationautoscaling"
 	"github.com/aws/aws-sdk-go/service/applicationautoscaling/applicationautoscalingiface"
@@ -55,22 +53,14 @@ func NewECSClient(awsRegion string, roleArn string) (*ECSClient, error) {
 		creds *credentials.Credentials
 	)
 
-	if roleArn == "nil" {
-		creds = credentials.NewChainCredentials(
-			[]credentials.Provider{
-				&credentials.EnvProvider{},
-				&ec2rolecreds.EC2RoleProvider{
-					Client: ec2metadata.New(sess),
-				},
-			})
+	if roleArn == "" {
+		log.Debugf("Using local cred chain")
+		creds = nil
 	}
 
 	if roleArn != "" {
+		log.Debugf("Assuming role arn")
 		creds = stscreds.NewCredentials(sess, roleArn)
-	}
-
-	if creds == nil {
-		return nil, fmt.Errorf("error creating aws credentials(creds)")
 	}
 
 	return &ECSClient{
