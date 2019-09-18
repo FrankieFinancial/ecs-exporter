@@ -6,12 +6,13 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/coveo/ecs-exporter/log"
+	"github.com/FrankieFinancial/ecs-exporter/log"
 )
 
 const (
 	defaultListenAddress    = ":9222"
 	defaultAwsRegion        = ""
+	defaultRoleArn          = ""
 	defaultMetricsPath      = "/metrics"
 	defaultClusterFilter    = ".*"
 	defaultDebug            = false
@@ -32,6 +33,7 @@ type config struct {
 
 	listenAddress    string
 	awsRegion        string
+	roleArn          string
 	metricsPath      string
 	clusterFilter    string
 	debug            bool
@@ -54,6 +56,9 @@ func new() *config {
 
 	c.fs.StringVar(
 		&c.awsRegion, "aws.region", defaultAwsRegion, "The AWS region to get metrics from")
+
+	c.fs.StringVar(
+		&c.roleArn, "aws.role-arn", defaultRoleArn, "You can specify a role to assume")
 
 	c.fs.StringVar(
 		&c.clusterFilter, "aws.cluster-filter", defaultClusterFilter, "Regex used to filter the cluster names, if doesn't match the cluster is ignored")

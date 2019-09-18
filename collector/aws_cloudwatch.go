@@ -6,12 +6,16 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+        "github.com/aws/aws-sdk-go/aws/credentials"
+        "github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds"
+        "github.com/aws/aws-sdk-go/aws/credentials/stscreds"
+        "github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 
-	"github.com/coveo/ecs-exporter/log"
-	"github.com/coveo/ecs-exporter/types"
+	"github.com/FrankieFinancial/ecs-exporter/log"
+	"github.com/FrankieFinancial/ecs-exporter/types"
 )
 
 const (
@@ -35,16 +39,39 @@ type CWClient struct {
 }
 
 // NewCWClient create a Cloudwatch API client
-func NewCWClient(awsRegion string) (*CWClient, error) {
-	// Create AWS session
-	s := session.Must(session.NewSession(&aws.Config{Region: aws.String(awsRegion)}))
+func NewCWClient(awsRegion string, roleArn string) (*CWClient, error) {
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region: aws.String(awsRegion),
+	}))
 
-	if s == nil {
+	if sess == nil {
 		return nil, fmt.Errorf("error creating aws session")
 	}
 
+	var (
+		creds *credentials.Credentials
+	)
+
+	if roleArn == "nil" {
+		creds = credentials.NewChainCredentials(
+			[]credentials.Provider{
+				&credentials.EnvProvider{},
+				&ec2rolecreds.EC2RoleProvider{
+					Client: ec2metadata.New(sess),
+				},
+			})
+	}
+
+	if roleArn != "" {
+		creds = stscreds.NewCredentials(sess, roleArn)
+	}
+
+	if creds == nil {
+		return nil, fmt.Errorf("error creating aws credentials(creds)")
+	}
+
 	return &CWClient{
-		client:        cloudwatch.New(s),
+		client:        cloudwatch.New(sess, aws.NewConfig().WithCredentials(creds)),
 		apiMaxResults: 100,
 	}, nil
 }

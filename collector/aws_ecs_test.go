@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	awsMock "github.com/coveo/ecs-exporter/mock/aws"
-	"github.com/coveo/ecs-exporter/mock/aws/sdk"
-	"github.com/coveo/ecs-exporter/types"
+        awsMock "github.com/FrankieFinancial/ecs-exporter/mock/aws"
+        "github.com/FrankieFinancial/ecs-exporter/mock/aws/sdk"
+        "github.com/FrankieFinancial/ecs-exporter/types"
 )
 
 func TestGetClusters(t *testing.T) {
