@@ -6,10 +6,9 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/FrankieFinancial/ecs-exporter/collector"
+	"github.com/FrankieFinancial/ecs-exporter/log"
 	"github.com/prometheus/client_golang/prometheus"
-
-	"github.com/coveo/ecs-exporter/collector"
-	"github.com/coveo/ecs-exporter/log"
 )
 
 // Main is the application entry point
@@ -31,7 +30,7 @@ func Main() int {
 	}
 
 	// Create the exporter and register it
-	exporter, err := collector.New(cfg.awsRegion, cfg.clusterFilter, cfg.disableCIMetrics)
+	exporter, err := collector.New(cfg.awsRegion, cfg.roleArn, cfg.clusterFilter, cfg.disableCIMetrics)
 	if err != nil {
 		log.Error(err)
 		return 1

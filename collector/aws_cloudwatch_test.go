@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/golang/mock/gomock"
-	"github.com/coveo/ecs-exporter/mock/aws/sdk"
-	"github.com/coveo/ecs-exporter/types"
+	"github.com/FrankieFinancial/ecs-exporter/mock/aws/sdk"
+	"github.com/FrankieFinancial/ecs-exporter/types"
 )
 
 const (

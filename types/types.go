@@ -27,6 +27,14 @@ type ECSContainerInstance struct {
 	PendingT   int64  // The number of tasks in the container instance with pending state
 }
 
+// ECSScalableTarget represents an ecs task with autoscaling enabled
+type ECSScalableTarget struct {
+	ClusterName string // Name of the Cluster
+	ServiceName string // Name of the Service
+	MinCapacity int64  // The max capacity of the autoscaling target
+	MaxCapacity int64  // The min capacity of the autoscaling target
+}
+
 type InstanceMetrics struct {
 	CPUUtilization float64 // Cpu
 }
