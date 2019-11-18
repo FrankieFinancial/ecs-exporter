@@ -1,13 +1,13 @@
-FROM golang:1.11 as builder
-WORKDIR /go/src/github.com/coveo/ecs-exporter/
+FROM golang:1.12 as builder
+WORKDIR /app
 ADD  . .
 RUN go build -o ecs-exporter --ldflags "-w -linkmode external -extldflags '-static'" ./cmd/ecs-exporter
 
 
-FROM alpine:3.8
+FROM alpine:3
 RUN apk --no-cache add ca-certificates
 WORKDIR /app
-COPY --from=builder /go/src/github.com/coveo/ecs-exporter/ecs-exporter .
+COPY --from=builder /app/ecs-exporter .
 # Create user
 ARG uid=1000
 ARG gid=1000
@@ -20,5 +20,4 @@ RUN chown -R $username:$username /app
 USER $username
 
 ENTRYPOINT ["./ecs-exporter"]
-
 

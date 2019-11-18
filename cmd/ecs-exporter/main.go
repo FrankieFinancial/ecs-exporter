@@ -9,6 +9,7 @@ import (
 	"github.com/FrankieFinancial/ecs-exporter/collector"
 	"github.com/FrankieFinancial/ecs-exporter/log"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // Main is the application entry point
@@ -38,7 +39,7 @@ func Main() int {
 	prometheus.MustRegister(exporter)
 
 	// Serve metrics
-	http.Handle(cfg.metricsPath, prometheus.Handler())
+	http.Handle(cfg.metricsPath, promhttp.Handler())
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`<html>
              <head><title>ECS Exporter</title></head>

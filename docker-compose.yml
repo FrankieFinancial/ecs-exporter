@@ -1,0 +1,6 @@
+version: '3.7'
+services:
+  ecs-exporter:
+    image: ${AWS_ACCOUNT}.dkr.ecr.ap-southeast-2.amazonaws.com/monitoring:ecs-exporter-lastest
+    build:
+      context: .
