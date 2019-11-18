@@ -1,5 +1,3 @@
-# ECS exporter [![Build Status](https://travis-ci.org/coveo/ecs-exporter.svg?branch=master)](https://travis-ci.org/coveo/ecs-exporter)
-
 Export AWS ECS cluster metrics to Prometheus
 
 ```bash
@@ -52,3 +50,6 @@ For example:
 docker pull coveo/ecs-exporter
 docker run -d -p 9222:9222 coveo/ecs-exporter -aws.region="eu-west-1"
 ```
+
+Forked and changed from: https://github.com/CornellSASIT/ecs-exporter
+
